@@ -1,6 +1,4 @@
 #include <iostream>
-#include <queue>
-#include <stack>
 #include <list>
 
 using namespace std;
@@ -8,6 +6,7 @@ using namespace std;
 struct node {
 	int val;
 	node *left, *right;
+
 	node(int v, node *l, node *r) {
 		this->val = v;
 		this->left = l;
@@ -15,8 +14,7 @@ struct node {
 	}
 };
 
-/*
-                1
+/*              1
                / \
               /   \
              /     \
@@ -31,9 +29,12 @@ struct node {
     4       5       6       7
    / \     / \     / \     / \
   /   \   /   \   /   \   /   \
- 8     9 10   11 12   13 14   15
+ 8     9 10   11 12   13 14   15  
 
-*/
+1 2 3 7 6 5 4 8 9 10 11 12 13 14 15 
+92 38 54 29 25 21 17 8 9 10 11 12 13 14 15 
+ */
+
 node* init() {
 	node *node15 = new node(15, NULL, NULL);
 	node *node14 = new node(14, NULL, NULL);
@@ -54,9 +55,7 @@ node* init() {
 	return node1;
 }
 
-int main() {
-	node *tree = init();
-
+int spiral_traversal(node *tree) {
 	// stack<node *> stac;
 	// queue<node *> que;
 	list<node *> stack1;
@@ -92,6 +91,46 @@ int main() {
 		}
 	}
 	cout << endl;
-	cout << "1 2 3 7 6 5 4 8 9 10 11 12 13 14 15\n";
+	//cout << "1 2 3 7 6 5 4 8 9 10 11 12 13 14 15\n";
+	return 0;
+}
+
+void increment_child(node *tree, int diff) {
+	if(tree->left != NULL) {
+		tree->left->val += diff;
+		increment_child(tree->left, diff);
+	} else if(tree->right != NULL) {
+		tree->right->val += diff;
+		increment_child(tree->right, diff);
+	}
+	return;
+}
+
+void doesSumPropertyHold(node *tree) {
+	if((tree == NULL) || (tree->left == NULL && tree->right == NULL)) return;
+
+	doesSumPropertyHold(tree->left);
+	doesSumPropertyHold(tree->right);
+	int left_val = 0, right_val = 0, diff = 0;
+
+	if(tree->left != NULL) left_val = tree->left->val;
+	if(tree->right != NULL) right_val = tree->right->val;
+
+	diff = left_val + right_val - tree->val;
+
+	if(diff > 0) {
+		tree->val += diff;
+	}
+
+	if(diff < 0) {
+		increment_child(tree, -diff);
+	}
+	return;
+}
+int main() {
+	node *tree = init();
+	spiral_traversal(tree);
+	doesSumPropertyHold(tree);
+	spiral_traversal(tree);
 	return 0;
 }

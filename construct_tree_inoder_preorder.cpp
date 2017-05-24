@@ -39,12 +39,32 @@ void construct_tree(string &in, string &pre, node *current_node, int start, int 
 	return;
 }
 
-void inorder_tra(node *head) {
+node* construct_tree_1(string &in, string &pre, int start, int end) {
+	static int pos = 0;
+	if(start > end) {
+		return NULL;
+	}
+	int i, j, center_index = -1;
+	char current_val = pre[pos++];
+	node *current_node = new node(current_val, NULL, NULL);
+
+	for (i = 0; i < in.length(); i++) {
+		if(in[i] == current_val)
+			center_index = i;
+	}
+	
+	current_node->left = construct_tree_1(in, pre, start, center_index - 1);
+	current_node->right = construct_tree_1(in, pre, center_index + 1, end);
+	return current_node;
+}
+
+
+void inorder_traversal(node *head) {
 	if(head == NULL) 
 		return;
-	inorder_tra(head->left);
+	inorder_traversal(head->left);
 	cout << (head->val) << " ";
-	inorder_tra(head->right);
+	inorder_traversal(head->right);
 	return;
 }
 
@@ -54,10 +74,10 @@ int main() {
 
 	node *root = NULL;
 	if(inorder.length() > 0 && preorder.length() > 0 && inorder.length() == preorder.length()) {
-		root = new node('\0', NULL, NULL);
-		construct_tree(inorder, preorder, root, 0, inorder.length());
+		// root = new node('\0', NULL, NULL);
+		root = construct_tree_1(inorder, preorder, 0, inorder.length() - 1);
 	}
 
-	inorder_tra(root);
+	inorder_traversal(root);
 	return 0;
 }
